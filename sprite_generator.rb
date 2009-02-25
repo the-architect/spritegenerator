@@ -31,36 +31,42 @@ class SpriteGenerator
   #             - variations: number of variations as number
   #             - variation: the current variation as zero based number
   #             - sprite_location: path to sprite
-  def create(files_or_paths, output, options = {})
-    files = find_files(files_or_paths)
-    return if files.empty?
-    delimiter = options.delete(:delimiter) || '_'
-    analyzed = analyze_filenames(files, delimiter)
-    
-    template = options.delete(:template)
-    sprite_location = options.delete(:sprite_location) || output
-    background = options.delete(:background) || '#FFFFFF00'
-    
-    tile_size = options.delete(:tile)
-    if tile_size == :auto
-      # find best filesize automatically
-    elsif !tile_size.nil?
-      size_x, size_y = tile_size.split('x').first(2).map{|dim| dim.to_i}
+  def initialize(files_or_paths, output, options = {})
+    @files = find_files(files_or_paths)
+    return if @files.nil? || @files.empty?
+    @output = output
+    @delimiter = options.delete(:delimiter) || '_'
+    @analyzed = analyze_filenames(@files, @delimiter)
+    @template = options.delete(:template)
+    @sprite_location = options.delete(:sprite_location) || @output
+    @background = options.delete(:background) || '#FFFFFF00'
+    @tile_size = options.delete(:tile)
+  end
+  
+  
+  def create
+    raise 'No files found.' if @files.nil? || @files.empty?
+    background = @background
+    unless @tile_size.nil?
+      size_x, size_y = @tile_size.split('x').first(2).map{|dim| dim.to_i}
+      
       tile = Magick::Image.new(size_x, size_y){ self.background_color = background }
       tile.format = "PNG"
     end    
-    image, css = build(analyzed, output, background, sprite_location, template, tile)
-    image.write(output){ self.background_color = background }
+    image, css = build(tile)
+    image.write(@output){ self.background_color = background }
     css
   end
   
   
-  def build(analyzed, output, background, sprite_location = nil, template = nil, tile = nil)
+  def build(tile = nil)
+    background = @background
     images = ImageList.new{ self.background_color = background }
-    context = { 'sprite_location' => sprite_location, 'tile' => tile }
+    context = { 'sprite_location' => @sprite_location, 'tile' => tile }
     css = []
-    template = Liquid::Template.parse(template) unless template.nil?
-    analyzed.each do |key, value|
+    current_template = Liquid::Template.parse(@template) unless @template.nil?
+    @analyzed.each do |key, value|
+      
       if tile
         context['left'] = images.length > 0 ? tile.columns : 0
       else
@@ -97,7 +103,7 @@ class SpriteGenerator
           images.from_blob(image.first.to_blob){ self.background_color = background }
         end
       end
-      css << build_css(template, context) unless template.nil?
+      css << build_css(current_template, context) unless current_template.nil?
     end
     
     [images.append(false), css.join("\n")]
