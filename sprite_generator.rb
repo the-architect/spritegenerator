@@ -31,7 +31,7 @@ class SpriteGenerator
   #             - variations: number of variations as number
   #             - variation: the current variation as zero based number
   #             - sprite_location: path to sprite
-  def self.create(files_or_paths, output, options = {})
+  def create(files_or_paths, output, options = {})
     files = find_files(files_or_paths)
     return if files.empty?
     delimiter = options.delete(:delimiter) || '_'
@@ -42,7 +42,9 @@ class SpriteGenerator
     background = options.delete(:background) || '#FFFFFF00'
     
     tile_size = options.delete(:tile)
-    unless tile_size.nil?
+    if tile_size == :auto
+      # find best filesize automatically
+    elsif !tile_size.nil?
       size_x, size_y = tile_size.split('x').first(2).map{|dim| dim.to_i}
       tile = Magick::Image.new(size_x, size_y){ self.background_color = background }
       tile.format = "PNG"
@@ -51,10 +53,9 @@ class SpriteGenerator
     image.write(output){ self.background_color = background }
     css
   end
-
-  protected
-
-  def self.build(analyzed, output, background, sprite_location = nil, template = nil, tile = nil)
+  
+  
+  def build(analyzed, output, background, sprite_location = nil, template = nil, tile = nil)
     images = ImageList.new{ self.background_color = background }
     context = { 'sprite_location' => sprite_location, 'tile' => tile }
     css = []
@@ -103,7 +104,7 @@ class SpriteGenerator
   end
   
   
-  def self.build_css(template, context = {})
+  def build_css(template, context = {})
     type = context.delete('type')
     new_context = context.dup
     tile = new_context.delete('tile')
@@ -132,7 +133,7 @@ class SpriteGenerator
   end
 
   # gather files that will be used to create the sprite
-  def self.find_files(*args)
+  def find_files(*args)
     args.inject([]) do |files, arg|
       found_files = Dir.glob(arg)
       if found_files.empty?
@@ -146,7 +147,7 @@ class SpriteGenerator
   
   # gather information about the selected files
   # check for variations by using a delimiter as an indicator
-  def self.analyze_filenames(file_names, delimiter = '_')
+  def analyze_filenames(file_names, delimiter = '_')
     file_names.inject(Hash.new{|hash, key| hash[key] = Array.new;}) do |h, file|
       basename = File.basename(file).split('.').first
       without_variation = basename.split(delimiter)[0..-2].join(delimiter)
