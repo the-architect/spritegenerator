@@ -11,7 +11,7 @@ AUTHOR = "Marcel Scherf"
 EMAIL = "marcel.scherf@gmail.com"
 HOMEPAGE = "http://www.marcelscherf.com"
 
- 
+
 spec = Gem::Specification.new do |s|
   s.name = GEM
   s.version = GEM_VERSION

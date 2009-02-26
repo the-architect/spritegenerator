@@ -11,7 +11,7 @@ class SpriteBatchGeneratorTest < Test::Unit::TestCase
   
   def teardown
     # delete test output
-    Dir.glob('../output/*').each{|f| File.delete f }
+    # Dir.glob('../output/*').each{|f| File.delete f }
   end
   
   
