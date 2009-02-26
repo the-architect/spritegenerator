@@ -3,6 +3,8 @@ require 'rmagick'
 require 'liquid'
 
 class SpriteGenerator
+  VERSION = '0.1.1'
+  
   include Magick
     
   # parameters:
