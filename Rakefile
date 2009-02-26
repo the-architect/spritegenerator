@@ -8,4 +8,8 @@ Hoe.new "sprite_generator", SpriteGenerator::VERSION do |p|
   
   p.author    = "Marcel Scherf"
   p.email     = "marcel.scherf@gmail.com"
+  
+  p.extra_deps << ["liquid", ">= 1.7.0"]
+  p.extra_deps << ["rmagick", ">= 2.2.2"]
+
 end

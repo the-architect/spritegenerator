@@ -25,11 +25,17 @@ Gem::Specification.new do |s|
     s.specification_version = 2
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<liquid>, [">= 1.7.0"])
+      s.add_runtime_dependency(%q<rmagick>, [">= 2.2.2"])
       s.add_development_dependency(%q<hoe>, [">= 1.8.3"])
     else
+      s.add_dependency(%q<liquid>, [">= 1.7.0"])
+      s.add_dependency(%q<rmagick>, [">= 2.2.2"])
       s.add_dependency(%q<hoe>, [">= 1.8.3"])
     end
   else
+    s.add_dependency(%q<liquid>, [">= 1.7.0"])
+    s.add_dependency(%q<rmagick>, [">= 2.2.2"])
     s.add_dependency(%q<hoe>, [">= 1.8.3"])
   end
 end
