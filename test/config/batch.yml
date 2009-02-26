@@ -1,0 +1,14 @@
+bugs:
+  files: ../images/bug_*.png
+  output: ../output/bugs.png
+  css_template: ../templates/test.css
+  css_output: ../output/bugs.css
+  options:
+    :template: '.{{basename}}_{{variation}}{ background:transparent url({{sprite_location}}) -{{left}}px -{{top}}px no-repeat; width:{{width}}px; height:{{height}}px; }'
+emoticons:
+  files: ../images/emoticon_*.png
+  output: ../output/emoticons.png
+  css_template: ../templates/test.css
+  css_output: ../output/emoticons.css
+  options:
+    :template: '.{{basename}}_{{variation}}{ background:transparent url({{sprite_location}}) -{{left}}px -{{top}}px no-repeat; width:{{width}}px; height:{{height}}px; }'
