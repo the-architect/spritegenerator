@@ -2,6 +2,10 @@ require 'rubygems'
 require 'hoe'
 require './lib/sprite_generator'
 
+task 'gemspec' do |t|
+  `rake -s debug_gem > sprite_generator.gemspec`
+end
+
 Hoe.new "sprite_generator", SpriteGenerator::VERSION do |p|
   p.developer "the-architect", 'marcel.scherf@gmail.com'
   p.summary   = "Automatically generate Sprite Images and the corresponding CSS using RMagick and Liquid."
@@ -11,5 +15,4 @@ Hoe.new "sprite_generator", SpriteGenerator::VERSION do |p|
   
   p.extra_deps << ["liquid", ">= 1.7.0"]
   p.extra_deps << ["rmagick", ">= 2.2.2"]
-
 end

@@ -18,8 +18,12 @@ class SpriteBatchGenerator
       generator = SpriteGenerator.new(batch.files, batch.output, batch.options || {})
       css       = generator.create
       # only write output if css_output is specified
-      unless batch.css_output.nil? || batch.css_template.nil? || css.nil? || css.empty?
-        output  = Liquid::Template.parse(File.open(batch.css_template).read).render('css' => css)
+      unless css.nil? || css.empty? || batch.css_output.nil?
+        if batch.css_template.nil?
+          output = css
+        else
+          output  = Liquid::Template.parse(File.open(batch.css_template).read).render('css' => css)
+        end
         File.open(batch.css_output, 'w+'){|f| f.puts output }
       end
     end
