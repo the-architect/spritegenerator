@@ -1,4 +1,4 @@
 Manifest.txt
-README.textile
+README.txt
 lib/sprite_generator.rb
 lib/sprite_batch_generator.rb

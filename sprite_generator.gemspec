@@ -2,15 +2,15 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sprite_generator}
-  s.version = "0.1.3"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marcel Scherf"]
   s.date = %q{2009-02-26}
   s.description = %q{}
   s.email = %q{marcel.scherf@gmail.com}
-  s.extra_rdoc_files = ["Manifest.txt"]
-  s.files = ["Manifest.txt", "README.textile", "lib/sprite_generator.rb", "lib/sprite_batch_generator.rb", "test/units/test_sprite_batch_generator.rb", "test/units/test_sprite_generator.rb"]
+  s.extra_rdoc_files = ["Manifest.txt", "README.txt"]
+  s.files = ["Manifest.txt", "README.txt", "lib/sprite_generator.rb", "lib/sprite_batch_generator.rb", "test/units/test_sprite_batch_generator.rb", "test/units/test_sprite_generator.rb"]
   s.has_rdoc = true
   s.homepage = %q{Automatically generate Sprite Images and the corresponding CSS using RMagick and Liquid.}
   s.rdoc_options = ["--main", "README.txt"]
