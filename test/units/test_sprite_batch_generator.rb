@@ -1,6 +1,6 @@
 require 'test/unit'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'sprite_generator'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'sprite_batch_generator'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'sprite_generator'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'sprite_batch_generator'))
 
 class SpriteBatchGeneratorTest < Test::Unit::TestCase
 

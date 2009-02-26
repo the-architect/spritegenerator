@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'liquid'
 require 'test/unit'
-require '../../sprite_generator.rb'
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'sprite_generator'))
 
 class SpriteGeneratorTest < Test::Unit::TestCase
   
