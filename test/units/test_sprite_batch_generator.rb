@@ -1,17 +1,16 @@
 require 'test/unit'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'sprite_generator'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'sprite_batch_generator'))
+require File.expand_path(File.dirname(__FILE__) + '/../../lib/sprite_batch_generator')
 
 class SpriteBatchGeneratorTest < Test::Unit::TestCase
 
   def setup
-    @config = '../config/batch.yml'
+    @config =  File.dirname(__FILE__) + '/../config/batch.yml'
   end
   
   
   def teardown
     # delete test output
-    # Dir.glob('../output/*').each{|f| File.delete f }
+    Dir.glob(File.dirname(__FILE__) + '/../output/*').each{|f| File.delete f }
   end
   
   
@@ -24,7 +23,7 @@ class SpriteBatchGeneratorTest < Test::Unit::TestCase
   def test_should_create_files_from_config
     @batch = SpriteBatchGenerator.new(@config)
     @batch.generate
-    output_files = Dir.glob('../output/*')
+    output_files = Dir.glob(File.dirname(__FILE__) + '/../output/*')
     assert 6, output_files.size
   end
   

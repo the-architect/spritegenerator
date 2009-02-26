@@ -1,16 +1,16 @@
 bugs:
-  files: ../images/bug_*.png
-  output: ../output/bugs.png
-  css_template: ../templates/test.css
-  css_output: ../output/bugs.css
+  files: test/images/bug_*.png
+  output: test/output/bugs.png
+  css_template: test/templates/test.css
+  css_output: test/output/bugs.css
   options:
     :template: '.{{basename}}_{{variation}}{ background:transparent url({{sprite_location}}) -{{left}}px -{{top}}px no-repeat; width:{{width}}px; height:{{height}}px; }'
 emoticons:
   files: 
-    - ../images/emoticon_*.png 
-    - ../images/bug_*.png
-  output: ../output/emoticons.png
-  css_template: ../templates/test.css
-  css_output: ../output/emoticons.css
+    - test/images/emoticon_*.png 
+    - test/images/bug_*.png
+  output: test/output/emoticons.png
+  css_template: test/templates/test.css
+  css_output: test/output/emoticons.css
   options:
     :template: '.{{basename}}_{{variation}}{ background:transparent url({{sprite_location}}) -{{left}}px -{{top}}px no-repeat; width:{{width}}px; height:{{height}}px; }'

@@ -3,7 +3,7 @@ require 'rmagick'
 require 'liquid'
 
 class SpriteGenerator
-  VERSION = '0.1.1'
+  VERSION = '0.1.2'
   
   include Magick
     
@@ -145,7 +145,7 @@ class SpriteGenerator
     args.inject([]) do |files, arg|
       found_files = Dir.glob(arg)
       if found_files.empty?
-        files << arg if File.exists?(arg)
+        files << arg if File.exists?(arg) rescue raise arg.map{|f| File.expand_path(f) }.inspect
       else
         files << found_files.flatten
       end

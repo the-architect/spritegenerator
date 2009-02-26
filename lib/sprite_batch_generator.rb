@@ -1,6 +1,6 @@
 require 'yaml'
 require 'ostruct'
-require File.expand_path(File.join(File.dirname(__FILE__), 'sprite_generator'))
+require File.expand_path(File.dirname(__FILE__) + '/sprite_generator')
 
 class SpriteBatchGenerator
   attr_reader :batches
