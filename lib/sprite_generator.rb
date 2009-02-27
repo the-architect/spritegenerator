@@ -75,7 +75,7 @@ class SpriteGenerator
         context['left'] = images.length > 0 ? images.append(false).columns : 0
       end
       context['top'] = 0
-      context['basename'] = key
+      context['basename'] = File.basename(key, '.*')
       context['overall'] = images.length
       
       if value.size > 1
