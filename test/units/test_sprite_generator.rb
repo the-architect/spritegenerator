@@ -19,6 +19,30 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   end
   
   
+  def test_should_create_correct_context
+    template = %q{
+      basename: {{basename}}
+      variation: {{variation}}
+      sprite_location: {{sprite_location}}
+      left: {{left}}
+      top: {{top}}
+      width: {{width}}
+      height: {{height}}
+      filename: {{filename}}
+      file_basename: {{file_basename}}
+      full_filename: {{full_filename}}
+      variations: {{variations}}
+      variation_number: {{variation_number}}
+      variation_name: {{variation_name}}
+    }
+    @generator = SpriteGenerator.new(@all_images_path, @output, {:template => template})
+    css = @generator.create
+    assert css.include?('basename: emoticon_evilgrin')
+    assert css.include?('variation_name: evilgrin')
+    assert css.include?('file_basename: emoticon_evilgrin')
+  end
+  
+  
   def test_should_center_images_on_tiles
     @generator = SpriteGenerator.new(@all_images_path, @output, {:template => @template, :tile => '100x100', :background => '#FFFFFF00'})
     css = @generator.create
@@ -31,6 +55,7 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     File.open(@page_path, 'w+'){|f| f.puts page }
     assert File.exists?(@page_path)
   end
+  
   
   def test_should_create_correct_css
     @generator = SpriteGenerator.new(@all_images_path, @output, :template => @template)
@@ -52,8 +77,8 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     assert !(css.nil? || css.empty?)
     assert File.exists?(@output)
   end
-      
-
+  
+  
   def test_should_find_versions_of_emoticons
     files = Dir.glob(@all_images_path)
     @generator = SpriteGenerator.new(files, {})

@@ -1,9 +1,9 @@
 require 'rubygems'
-require 'rmagick'
+require 'RMagick'
 require 'liquid'
 
 class SpriteGenerator
-  VERSION = '0.1.4'
+  VERSION = '0.1.5'
   
   include Magick
     
@@ -37,12 +37,14 @@ class SpriteGenerator
     @files = find_files(files_or_paths)
     return if @files.nil? || @files.empty?
     @output = output
-    @delimiter = options.delete(:delimiter) || '_'
+    @delimiter = options[:delimiter] || '_'
     @analyzed = analyze_filenames(@files, @delimiter)
-    @template = options.delete(:template)
-    @sprite_location = options.delete(:sprite_location) || @output
-    @background = options.delete(:background) || '#FFFFFF00'
-    @tile_size = options.delete(:tile)
+    
+    @template = Liquid::Template.parse(options[:template] || '')
+    
+    @sprite_location = options[:sprite_location] || @output
+    @background = options[:background] || '#FFFFFF00'
+    @tile_size = options[:tile]
   end
   
   
@@ -54,11 +56,14 @@ class SpriteGenerator
       
       tile = Magick::Image.new(size_x, size_y){ self.background_color = background }
       tile.format = "PNG"
-    end    
+    end
     image, css = build(tile)
     image.write(@output){ self.background_color = background }
     css
   end
+  
+  
+protected
   
   
   def build(tile = nil)
@@ -66,7 +71,7 @@ class SpriteGenerator
     images = ImageList.new{ self.background_color = background }
     context = { 'sprite_location' => @sprite_location, 'tile' => tile }
     css = []
-    current_template = Liquid::Template.parse(@template) unless @template.nil?
+    
     @analyzed.each do |key, value|
       
       if tile
@@ -96,7 +101,8 @@ class SpriteGenerator
       else
         image = Image.read(value.flatten.first){ self.background_color = background }
         context['variations'] = 0
-        context['variation'] = 0
+        context['variation_name'] = ''
+        context['variation_number'] = 0
         context['type'] = :image
         
         if tile
@@ -105,53 +111,61 @@ class SpriteGenerator
           images.from_blob(image.first.to_blob){ self.background_color = background }
         end
       end
-      css << build_css(current_template, context) unless current_template.nil?
+      css << build_css(context)
     end
     
     [images.append(false), css.join("\n")]
   end
   
   
-  def build_css(template, context = {})
+  def build_css(context = {})
     type = context.delete('type')
-    new_context = context.dup
-    tile = new_context.delete('tile')
-    
     case type
     when :list
-      image_list = context.delete('images')
-      
-      new_context['type'] = :image
-      css = image_list.inject([]) do |css, image|
-        new_context['width'] = tile ? tile.columns : image.columns
-        new_context['height'] = tile ? tile.rows : image.rows
-        new_context['variation'] = css.size
-        new_context['full_filename'] = context['filenames'].shift
-        new_context['filename'] = File.basename(new_context['full_filename'])
-
-        css << build_css(template, new_context.dup)
-        new_context['top'] += tile ? tile.columns : new_context['height']
-        css
-      end.join("\n")
+      css = build_css_for_list(context)
     when :image
       # render template if there is only one image
-      css = template.render(context)
+      css = @template.render(context)
     end
     css
   end
+  
+  
+  def build_css_for_list(context)
+    new_context = context.dup
+    tile = new_context.delete('tile')
+    image_list = context.delete('images')
+    new_context['type'] = :image
+    css = image_list.inject([]) do |css, image|
+      new_context['width'] = tile ? tile.columns : image.columns
+      new_context['height'] = tile ? tile.rows : image.rows
+      new_context['variation_number'] = css.size
+      
+      new_context['full_filename'] = context['filenames'].shift
+      new_context['filename'] = File.basename(new_context['full_filename'])
+      new_context['file_basename'] = File.basename(new_context['full_filename'], '.*')
+      new_context['variation_name'] = new_context['file_basename'].gsub(/^#{new_context['basename']}#{@delimiter}/, '')
 
+      css << build_css(new_context.dup)
+      new_context['top'] += tile ? tile.columns : new_context['height']
+      css
+    end.join("\n")
+  end
+  
+  
   # gather files that will be used to create the sprite
   def find_files(*args)
     args.inject([]) do |files, arg|
       found_files = Dir.glob(arg)
       if found_files.empty?
-        files << arg if File.exists?(arg) rescue raise arg.map{|f| File.expand_path(f) }.inspect
+        files << arg if File.exists?(arg) rescue raise arg.inspect
       else
         files << found_files.flatten
       end
       files.flatten.compact.uniq
     end
   end
+  
   
   # gather information about the selected files
   # check for variations by using a delimiter as an indicator
@@ -164,5 +178,6 @@ class SpriteGenerator
       h
     end
   end
+  
   
 end

@@ -19,12 +19,15 @@ class SpriteBatchGeneratorTest < Test::Unit::TestCase
     assert_not_nil @batch
     assert_equal 2, @batch.batches.size
   end
-
+  
+  
   def test_should_create_files_from_config
     @batch = SpriteBatchGenerator.new(@config)
-    @batch.generate
+    css = @batch.generate
+    assert_not_nil css
     output_files = Dir.glob(File.dirname(__FILE__) + '/../output/*')
     assert 6, output_files.size
   end
+  
   
 end
