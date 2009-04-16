@@ -4,15 +4,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../../lib/sprite_batch_gener
 class SpriteBatchGeneratorTest < Test::Unit::TestCase
 
   def setup
-    @config =  File.dirname(__FILE__) + '/../config/batch.yml'
+    @config = 'test/config/batch.yml'
   end
-  
   
   def teardown
     # delete test output
-    Dir.glob(File.dirname(__FILE__) + '/../output/*').each{|f| File.delete f }
+    Dir.glob('test/output/*').each{|f| File.delete f }
   end
-  
   
   def test_should_read_config_file
     @batch = SpriteBatchGenerator.new(@config)
@@ -20,14 +18,12 @@ class SpriteBatchGeneratorTest < Test::Unit::TestCase
     assert_equal 2, @batch.batches.size
   end
   
-  
   def test_should_create_files_from_config
     @batch = SpriteBatchGenerator.new(@config)
     css = @batch.generate
     assert_not_nil css
-    output_files = Dir.glob(File.dirname(__FILE__) + '/../output/*')
+    output_files = Dir.glob('test/output/*')
     assert 6, output_files.size
   end
-  
   
 end

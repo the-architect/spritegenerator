@@ -3,7 +3,7 @@ require 'RMagick'
 require 'liquid'
 
 class SpriteGenerator
-  VERSION = '0.1.5'
+  VERSION = '0.1.7'
   
   include Magick
     
@@ -33,18 +33,18 @@ class SpriteGenerator
   #             - variations: number of variations as number
   #             - variation: the current variation as zero based number
   #             - sprite_location: path to sprite
-  def initialize(files_or_paths, output, options = {})
+  def initialize(files_or_paths, output, root, options = {})
     @files = find_files(files_or_paths)
     return if @files.nil? || @files.empty?
-    @output = output
-    @delimiter = options[:delimiter] || '_'
-    @analyzed = analyze_filenames(@files, @delimiter)
-    
-    @template = Liquid::Template.parse(options[:template] || '')
+    @root       = root || ''
+    @output     = output
+    @delimiter  = options[:delimiter] || '-'
+    @analyzed   = analyze_filenames(@files, @delimiter)
+    @template   = Liquid::Template.parse(options[:template] || '')
     
     @sprite_location = options[:sprite_location] || @output
     @background = options[:background] || '#FFFFFF00'
-    @tile_size = options[:tile]
+    @tile_size  = options[:tile]
   end
   
   
@@ -53,12 +53,12 @@ class SpriteGenerator
     background = @background
     unless @tile_size.nil?
       size_x, size_y = @tile_size.split('x').first(2).map{|dim| dim.to_i}
-      
       tile = Magick::Image.new(size_x, size_y){ self.background_color = background }
       tile.format = "PNG"
     end
+    destination = @root.nil? || @root.empty? ? @output : File.join(@root, @output)
     image, css = build(tile)
-    image.write(@output){ self.background_color = background }
+    image.write(destination){ self.background_color = background }
     css
   end
   
@@ -73,7 +73,6 @@ protected
     css = []
     
     @analyzed.each do |key, value|
-      
       if tile
         context['left'] = images.length > 0 ? tile.columns : 0
       else

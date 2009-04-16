@@ -7,15 +7,15 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   
   def setup
     @template = '.{{basename}}_{{variation}}{ background:transparent url({{sprite_location}}) -{{left}}px -{{top}}px no-repeat; width:{{width}}px; height:{{height}}px; }'
-    @all_images_path = File.dirname(__FILE__) + '/../images/*.png'
-    @output = File.dirname(__FILE__) + '/../output/sprite_by_create.png'
-    @page_path = File.dirname(__FILE__) + '/../output/test.html'
+    @all_images_path = 'test/images/*.png'
+    @output = 'test/output/sprite_by_create.png'
+    @page_path = 'test/output/test.html'
   end
   
   
   def teardown
     # delete test output
-    Dir.glob(File.dirname(__FILE__) + '/../output/*').each{|f| File.delete f }
+    Dir.glob('test/output/*').each{|f| File.delete f }
   end
   
   
@@ -35,18 +35,18 @@ class SpriteGeneratorTest < Test::Unit::TestCase
       variation_number: {{variation_number}}
       variation_name: {{variation_name}}
     }
-    @generator = SpriteGenerator.new(@all_images_path, @output, {:template => template})
+    @generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => template})
     css = @generator.create
-    assert css.include?('basename: emoticon_evilgrin')
+    assert css.include?('basename: emoticon-evilgrin')
     assert css.include?('variation_name: evilgrin')
-    assert css.include?('file_basename: emoticon_evilgrin')
+    assert css.include?('file_basename: emoticon-evilgrin')
   end
   
   
   def test_should_center_images_on_tiles
-    @generator = SpriteGenerator.new(@all_images_path, @output, {:template => @template, :tile => '100x100', :background => '#FFFFFF00'})
+    @generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF00'})
     css = @generator.create
-    page = Liquid::Template.parse(File.open(File.dirname(__FILE__) + '/../templates/test.html').read).render('css' => css)
+    page = Liquid::Template.parse(File.open('test/templates/test.html').read).render('css' => css)
     assert page.include?("{ background:")
     assert page.include?("width:100px")
     assert page.include?("height:100px")
@@ -58,9 +58,9 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   
   
   def test_should_create_correct_css
-    @generator = SpriteGenerator.new(@all_images_path, @output, :template => @template)
+    @generator = SpriteGenerator.new(@all_images_path, @output, nil, :template => @template)
     css = @generator.create()
-    page = Liquid::Template.parse(File.open(File.dirname(__FILE__) + '/../templates/test.html').read).render('css' => css)
+    page = Liquid::Template.parse(File.open('test/templates/test.html').read).render('css' => css)
     assert page.include?("{ background:")
     assert page.include?("width:16px")
     assert page.include?("height:16px")
@@ -72,7 +72,7 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   
   
   def test_should_generate_sprite_file
-    @generator = SpriteGenerator.new(@all_images_path, @output, :template => @template)
+    @generator = SpriteGenerator.new(@all_images_path, @output, nil, :template => @template)
     css = @generator.create
     assert !(css.nil? || css.empty?)
     assert File.exists?(@output)
@@ -81,28 +81,28 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   
   def test_should_find_versions_of_emoticons
     files = Dir.glob(@all_images_path)
-    @generator = SpriteGenerator.new(files, {})
+    @generator = SpriteGenerator.new(files, @output, nil, {})
     analyzed = @generator.instance_variable_get(:@analyzed)
     assert_equal 9, analyzed['emoticon'].size
   end
   
   
   def test_should_find_files_for_glob_path
-    @generator = SpriteGenerator.new(@all_images_path, {})
+    @generator = SpriteGenerator.new(@all_images_path, @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 16, files.size
   end
   
   
   def test_should_find_files
-    @generator = SpriteGenerator.new([File.dirname(__FILE__) + '/../images/emoticon_evilgrin.png', File.dirname(__FILE__) + '/../images/emoticon_grin.png'], {})
+    @generator = SpriteGenerator.new(['test/images/emoticon-evilgrin.png', 'test/images/emoticon-grin.png'], @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 2, files.size
   end
   
   
   def test_should_not_find_anything
-    @generator = SpriteGenerator.new(File.dirname(__FILE__) + '/../blalala/*.hurz', {})
+    @generator = SpriteGenerator.new('test/blalala/*.hurz', @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 0, files.size
   end
