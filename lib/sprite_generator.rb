@@ -3,7 +3,7 @@ require 'RMagick'
 require 'liquid'
 
 class SpriteGenerator
-  VERSION = '0.1.8'
+  VERSION = '0.1.9'
   
   include Magick
     
@@ -45,7 +45,7 @@ class SpriteGenerator
     @sprite_location = options[:sprite_location] || @output
     @background = options[:background] || '#FFFFFF00'
     @tile_size  = options[:tile]
-    @gravity    = options[:gravity] ? Magick.const_get("#{options[:gravity].capitalize}Gravity") : Magick::CenterGravity
+    @gravity    = options[:gravity] ? Magick.const_get("#{camelize(options[:gravity])}Gravity") : Magick::CenterGravity
   end
   
   
@@ -66,6 +66,10 @@ class SpriteGenerator
   
 protected
   
+  # simplyfied version of active_supports camelize version
+  def camelize(lower_case_and_underscored_word)
+    lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
+  end
   
   def build(tile = nil)
     background = @background

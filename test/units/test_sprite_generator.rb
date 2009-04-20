@@ -48,7 +48,6 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     end
   end
   
-  
   def test_should_complain_over_unknown_gravity_option
     assert_raise NameError do
       SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :gravity => 'somewhere'})
