@@ -42,15 +42,15 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     assert css.include?('file_basename: emoticon-evilgrin')
   end
   
-  def test_should_use_gravity_option
+  def test_should_use_alignment_option
     assert_nothing_raised do
-      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :gravity => 'west'})
+      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :alignment => 'west'})
     end
   end
   
-  def test_should_complain_over_unknown_gravity_option
+  def test_should_complain_over_unknown_alignment_option
     assert_raise NameError do
-      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :gravity => 'somewhere'})
+      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :alignment => 'somewhere'})
     end
   end
   

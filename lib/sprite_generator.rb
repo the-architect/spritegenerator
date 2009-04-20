@@ -3,7 +3,7 @@ require 'RMagick'
 require 'liquid'
 
 class SpriteGenerator
-  VERSION = '0.1.9'
+  VERSION = '0.1.10'
   
   include Magick
     
@@ -17,6 +17,7 @@ class SpriteGenerator
   #     ie: '_' for 'icon_hover.png'
   #     ie: '-' for 'icon-hover.png'
   #         if icon is the basename
+  #   - align: 
   #   - sprite_location: will be available as variable in the liquid template, if this is not set, the template will use output as sprite_location
   #   - tile: if set to ie. '100x100' it will center every image on a 100 by 100 tile
   #   - template: Liquid template for each sprite, use this to build the css for your sprites
@@ -28,6 +29,8 @@ class SpriteGenerator
   #             - basename: filename or basename of variations
   #               ie: with variations: icon_out.png, icon_over.png  => icon
   #               ie: without variations: icon.png => icon.png
+  #             - file_basename: always the name of the current image without extension
+  # =>            ie: icon_over
   #             - filename: icon_over.png
   #             - full_filename: ../images/icons/icon_over.ong
   #             - variations: number of variations as number
@@ -45,7 +48,7 @@ class SpriteGenerator
     @sprite_location = options[:sprite_location] || @output
     @background = options[:background] || '#FFFFFF00'
     @tile_size  = options[:tile]
-    @gravity    = options[:gravity] ? Magick.const_get("#{camelize(options[:gravity])}Gravity") : Magick::CenterGravity
+    @alignment    = options[:alignment] ? Magick.const_get("#{camelize(options[:alignment])}Gravity") : Magick::CenterGravity
   end
   
   
@@ -92,7 +95,7 @@ protected
         if tile
           tiles = ImageList.new{ self.background_color = background }
           image_list.each do |image|
-            tiles << tile.composite(image, @gravity, Magick::OverCompositeOp)
+            tiles << tile.composite(image, @alignment, Magick::OverCompositeOp)
           end
           images.from_blob(tiles.append(true).to_blob){ self.background_color = background }
         else
@@ -110,7 +113,7 @@ protected
         context['type'] = :image
         
         if tile
-          images.from_blob(tile.composite(image.first, @gravity, Magick::OverCompositeOp).to_blob){ self.background_color = background }
+          images.from_blob(tile.composite(image.first, @alignment, Magick::OverCompositeOp).to_blob){ self.background_color = background }
         else
           images.from_blob(image.first.to_blob){ self.background_color = background }
         end
