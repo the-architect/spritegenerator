@@ -3,7 +3,7 @@ require 'RMagick'
 require 'liquid'
 
 class SpriteGenerator
-  VERSION = '0.1.7'
+  VERSION = '0.1.8'
   
   include Magick
     
@@ -45,6 +45,7 @@ class SpriteGenerator
     @sprite_location = options[:sprite_location] || @output
     @background = options[:background] || '#FFFFFF00'
     @tile_size  = options[:tile]
+    @gravity    = options[:gravity] ? Magick.const_get("#{options[:gravity].capitalize}Gravity") : Magick::CenterGravity
   end
   
   
@@ -87,7 +88,7 @@ protected
         if tile
           tiles = ImageList.new{ self.background_color = background }
           image_list.each do |image|
-            tiles << tile.composite(image, Magick::CenterGravity, Magick::OverCompositeOp)
+            tiles << tile.composite(image, @gravity, Magick::OverCompositeOp)
           end
           images.from_blob(tiles.append(true).to_blob){ self.background_color = background }
         else
@@ -105,7 +106,7 @@ protected
         context['type'] = :image
         
         if tile
-          images.from_blob(tile.composite(image.first, Magick::CenterGravity, Magick::OverCompositeOp).to_blob){ self.background_color = background }
+          images.from_blob(tile.composite(image.first, @gravity, Magick::OverCompositeOp).to_blob){ self.background_color = background }
         else
           images.from_blob(image.first.to_blob){ self.background_color = background }
         end

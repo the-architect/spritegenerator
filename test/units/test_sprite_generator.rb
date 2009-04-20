@@ -42,6 +42,18 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     assert css.include?('file_basename: emoticon-evilgrin')
   end
   
+  def test_should_use_gravity_option
+    assert_nothing_raised do
+      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :gravity => 'west'})
+    end
+  end
+  
+  
+  def test_should_complain_over_unknown_gravity_option
+    assert_raise NameError do
+      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :gravity => 'somewhere'})
+    end
+  end
   
   def test_should_center_images_on_tiles
     @generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF00'})
@@ -78,7 +90,7 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     assert File.exists?(@output)
   end
   
-  
+  # bad, testing internal state
   def test_should_find_versions_of_emoticons
     files = Dir.glob(@all_images_path)
     @generator = SpriteGenerator.new(files, @output, nil, {})
@@ -86,21 +98,21 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     assert_equal 9, analyzed['emoticon'].size
   end
   
-  
+  # bad, using internal state
   def test_should_find_files_for_glob_path
     @generator = SpriteGenerator.new(@all_images_path, @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 16, files.size
   end
   
-  
+  # bad, using internal state
   def test_should_find_files
     @generator = SpriteGenerator.new(['test/images/emoticon-evilgrin.png', 'test/images/emoticon-grin.png'], @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 2, files.size
   end
   
-  
+  # bad, using internal state
   def test_should_not_find_anything
     @generator = SpriteGenerator.new('test/blalala/*.hurz', @output, nil, {})
     files = @generator.instance_variable_get(:@files)
