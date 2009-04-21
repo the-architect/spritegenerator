@@ -30,7 +30,7 @@ class SpriteGenerator
   #               ie: with variations: icon_out.png, icon_over.png  => icon
   #               ie: without variations: icon.png => icon.png
   #             - file_basename: always the name of the current image without extension
-  # =>            ie: icon_over
+  #               ie: icon_over
   #             - filename: icon_over.png
   #             - full_filename: ../images/icons/icon_over.ong
   #             - variations: number of variations as number
