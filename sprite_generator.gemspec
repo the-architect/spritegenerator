@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
     "lib/sprite_generator.rb"
   ]
   s.has_rdoc = true
+  s.homepage = %q{http://github.com/the-architect/spritegenerator}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
