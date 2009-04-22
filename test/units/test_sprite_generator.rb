@@ -18,6 +18,13 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     Dir.glob('test/output/*').each{|f| File.delete f }
   end
   
+  def test_should_set_correct_context_for_images_without_variations
+    template = %q{ {{file_basename}} }
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
+    css = generator.create
+    assert css.include?('emoticon-evilgrin')
+  end
+  
   
   def test_should_create_correct_context
     template = %q{
@@ -35,8 +42,8 @@ class SpriteGeneratorTest < Test::Unit::TestCase
       variation_number: {{variation_number}}
       variation_name: {{variation_name}}
     }
-    @generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => template})
-    css = @generator.create
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => template})
+    css = generator.create
     assert css.include?('basename: emoticon-evilgrin')
     assert css.include?('variation_name: evilgrin')
     assert css.include?('file_basename: emoticon-evilgrin')

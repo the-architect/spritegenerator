@@ -106,10 +106,17 @@ protected
         context['images'] = image_list
         context['filenames'] = value
       else
-        image = Image.read(value.flatten.first){ self.background_color = background }
+        
+        filename = value.flatten.first
+        image = Image.read(filename){ self.background_color = background }
+        
         context['variations'] = 0
         context['variation_name'] = ''
         context['variation_number'] = 0
+        context['full_filename'] = filename
+        context['file_basename'] = File.basename(filename, '.*')
+        context['variation_name'] = context['file_basename'].gsub(/^#{context['basename']}#{@delimiter}/, '')
+        
         context['type'] = :image
         
         if tile

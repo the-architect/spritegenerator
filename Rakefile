@@ -4,6 +4,7 @@ ENV['RUBY_FLAGS'] = ''
 require 'rubygems'
 require './lib/sprite_generator'
 
+
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |p|
