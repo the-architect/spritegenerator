@@ -18,13 +18,42 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     Dir.glob('test/output/*').each{|f| File.delete f }
   end
   
-  def test_should_set_correct_context_for_images_without_variations
+  def test_should_user_horizontal_distribution
+    template = %q{ {{left}} }
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => :horizontal })
+    css = generator.create
+    assert css.include?('240')
+  end
+  
+  def test_should_user_vertical_distribution
+    template = %q{ {{top}} }
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => :vertical })
+    css = generator.create
+    `open #{@output}`
+    sleep 1
+    assert css.include?('240')
+  end
+  
+  def test_should_set_correct_context_filebasename_for_images_without_variations
     template = %q{ {{file_basename}} }
     generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
     css = generator.create
     assert css.include?('emoticon-evilgrin')
   end
   
+  def test_should_set_correct_context_width_for_images_without_variations
+    template = %q{ {{width}} }
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
+    css = generator.create
+    assert css.include?('16')
+  end
+  
+  def test_should_set_correct_context_top_for_images_without_variations
+    template = %q{ {{top}} }
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
+    css = generator.create
+    assert !css.include?('-16')
+  end
   
   def test_should_create_correct_context
     template = %q{
