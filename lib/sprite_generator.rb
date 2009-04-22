@@ -112,8 +112,8 @@ protected
       'full_filename'    => filename,
       'file_basename'    => file_basename,
       'variation_name'   => file_basename.gsub(/^#{basename}#{@delimiter}/, ''),
-      'width'            => @tile ? tile.columns : image.columns,
-      'height'           => @tile ? tile.rows    : image.rows,
+      'width'            => @tile ? @tile.columns : image.columns,
+      'height'           => @tile ? @tile.rows    : image.rows,
       'type'             => :image
     }
   end

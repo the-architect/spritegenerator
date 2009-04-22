@@ -29,8 +29,6 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     template = %q{ {{top}} }
     generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => :vertical })
     css = generator.create
-    `open #{@output}`
-    sleep 1
     assert css.include?('240')
   end
   
