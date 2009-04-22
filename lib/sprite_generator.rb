@@ -137,7 +137,7 @@ protected
   
   def append_to_sprite(images)
     background  = @background
-   @images.from_blob(images.append(true).to_blob){ self.background_color = background }
+    @images.from_blob(images.append(true).to_blob){ self.background_color = background }
   end
   
   
@@ -209,7 +209,7 @@ protected
   
   # put filenames in format for each mode
   def find_files_for_mode(mode)
-    case mode
+    case mode.to_sym
     when :smart
       smart_distribution
     when :horizontal
