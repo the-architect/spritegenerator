@@ -26,4 +26,10 @@ class SpriteBatchGeneratorTest < Test::Unit::TestCase
     assert 6, output_files.size
   end
   
+protected
+
+  def this_method
+    caller[0] =~ /`([^']*)'/ and $1
+  end
+  
 end

@@ -72,19 +72,17 @@ protected
     
     @analyzed.keys.sort.each do |key|
       value = @analyzed[key]
-      if @tile
-        context['left'] = @images.length > 0 ? @tile.columns : 0
-      else
-        context['left'] = @images.length > 0 ? @images.append(false).columns : 0
-      end
+      
       context['top']      = 0
       context['basename'] = key
       context['overall']  = @images.length
-      
-      value.size > 1 ? build_image_list(context, value.sort) : build_single_image(context, value.flatten.first)
+      if value.size > 1
+        context = build_image_list(context, value.sort)
+      else
+        context = build_single_image(context, value.flatten.first)
+      end
       @css << build_css(context)
     end
-    
     [@images.append(false), @css.join("\n")]
   end
   
@@ -94,12 +92,12 @@ protected
     image       = Image.read(filename){ self.background_color = background }.flatten.first
     
     context.merge!(build_context_for_single_image(image, filename, context['basename']))
-    
     if @tile
       @images.from_blob(@tile.composite(image, @alignment, Magick::OverCompositeOp).to_blob){ self.background_color = background }
     else
       @images.from_blob(image.to_blob){ self.background_color = background }
     end
+    context
   end
   
   
@@ -114,14 +112,21 @@ protected
       'variation_name'   => file_basename.gsub(/^#{basename}#{@delimiter}/, ''),
       'width'            => @tile ? @tile.columns : image.columns,
       'height'           => @tile ? @tile.rows    : image.rows,
-      'type'             => :image
+      'type'             => :image,
+      'left'             => left_value_for_context
     }
+  end
+  
+  
+  def left_value_for_context
+    @tile ? (@images.length * @tile.columns) : (@images.any? ? @images.append(false).columns : 0)
   end
   
   
   def build_image_list(context, image_filenames)
     background  = @background
     image_list = ImageList.new(*image_filenames){ self.background_color = background }
+    context.merge!(build_context_for_image_list(image_list, image_filenames))
     if @tile
       tiles = ImageList.new{ self.background_color = background }
       image_list.each do |image|
@@ -131,7 +136,7 @@ protected
     else
       append_to_sprite(image_list)
     end
-    context.merge!(build_context_for_image_list(image_list, image_filenames))
+    context
   end
   
   
@@ -146,7 +151,8 @@ protected
       'variations' => image_list.length,
       'type'       => :list,
       'images'     => image_list,
-      'filenames'  => image_filenames
+      'filenames'  => image_filenames,
+      'left'        => left_value_for_context
     }
   end
   
@@ -161,7 +167,7 @@ protected
   
   
   def build_css(context = {})
-    type = context.delete('type')
+    type = context['type']
     case type
     when :list
       css = build_css_for_list(context)
@@ -185,9 +191,9 @@ protected
       new_context['filename']         = File.basename(new_context['full_filename'])
       new_context['file_basename']    = File.basename(new_context['full_filename'], '.*')
       new_context['variation_name']   = new_context['file_basename'].gsub(/^#{new_context['basename']}#{@delimiter}/, '')
-
       css << build_css(new_context.dup)
-      new_context['top'] += @tile ? @tile.columns : new_context['height']
+
+      new_context['top'] += @tile ? @tile.rows : new_context['height']
       css
     end.join("\n")
   end

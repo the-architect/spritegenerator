@@ -17,17 +17,75 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     # delete test output
     Dir.glob('test/output/*').each{|f| File.delete f }
   end
+
+  def test_should_create_correct_sprite_for_tile_with_vertical_distribution
+    options = {
+      :distribution => 'vertical',
+      :tile         => '40x300',
+      :alignment    => 'north_west',
+      :template     => "a.{{file_basename}} { padding-left:2em; background: transparent url(#{this_method}.png) -{{left}}px -{{top}}px no-repeat; }"
+    }
+    
+    generator = SpriteGenerator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
+    css = generator.create
+    assert css.include?('-4500px')
+    
+    page = Liquid::Template.parse(File.open('test/templates/link.html').read).render('css' => css, 'image' => "#{this_method}.png")
+    output_file = File.join('test', 'output', "#{this_method}.html")
+    File.open(output_file, 'w+'){ |f| f.puts page }
+    assert File.exists?(output_file)
+  end  
+  
+  
+  def test_should_create_correct_sprite_for_tile_with_vertical_distribution
+    options = {
+      :distribution => 'vertical',
+      :tile         => '40x300',
+      :alignment    => 'north_west',
+      :template     => "a.{{file_basename}} { padding-left:2em; background: transparent url(#{this_method}.png) -{{left}}px -{{top}}px no-repeat; }"
+    }
+    
+    generator = SpriteGenerator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
+    css = generator.create
+    assert css.include?('-4500px')
+    
+    page = Liquid::Template.parse(File.open('test/templates/link.html').read).render('css' => css, 'image' => "#{this_method}.png")
+    output_file = File.join('test', 'output', "#{this_method}.html")
+    File.open(output_file, 'w+'){ |f| f.puts page }
+    assert File.exists?(output_file)
+  end
+  
+  
+  
+  def test_should_create_correct_sprite_for_tile_with_horizontal_distribution
+    options = {
+      :distribution => 'horizontal',
+      :tile         => '400x50',
+      :alignment    => 'north_west',
+      :template     => "a.{{file_basename}} { padding-left:2em; background: transparent url(#{this_method}.png) -{{left}}px -{{top}}px no-repeat; }"
+    }
+    
+    generator = SpriteGenerator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
+    css = generator.create
+    assert css.include?('-6000px')
+    
+    page = Liquid::Template.parse(File.open('test/templates/link.html').read).render('css' => css, 'image' => "#{this_method}.png")
+    output_file = File.join('test', 'output', "#{this_method}.html")
+    File.open(output_file, 'w+'){ |f| f.puts page }
+    assert File.exists?(output_file)
+  end
+  
   
   def test_should_user_horizontal_distribution
     template = %q{ {{left}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => :horizontal })
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => 'horizontal' })
     css = generator.create
     assert css.include?('240')
   end
   
   def test_should_user_vertical_distribution
     template = %q{ {{top}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => :vertical })
+    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => 'vertical' })
     css = generator.create
     assert css.include?('240')
   end
@@ -151,6 +209,11 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     files = @generator.instance_variable_get(:@files)
     assert_equal 0, files.size
   end
-  
-  
+
+protected
+
+  def this_method
+    caller[0] =~ /`([^']*)'/ and $1
+  end
+
 end
