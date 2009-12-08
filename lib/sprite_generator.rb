@@ -105,11 +105,10 @@ protected
     file_basename = File.basename(filename, '.*')
     {
       'variations'       => 0,
-      'variation_name'   => '',
       'variation_number' => 0,
       'full_filename'    => filename,
       'file_basename'    => file_basename,
-      'variation_name'   => file_basename.gsub(/^#{basename}#{@delimiter}/, ''),
+      'variation_name'   => file_basename.gsub("#{basename}#{@delimiter}", ''),
       'width'            => @tile ? @tile.columns : image.columns,
       'height'           => @tile ? @tile.rows    : image.rows,
       'type'             => :image,
