@@ -42,7 +42,8 @@ class SpriteGenerator
     @root             = root || ''
     @output           = output
     @delimiter        = options[:delimiter] || '-'
-    @analyzed         = find_files_for_mode(options[:distribution] || :smart)
+    @distribution     = (options[:distribution] || :smart).to_sym
+    @analyzed         = find_files_for_mode
     @template         = Liquid::Template.parse(options[:template] || '')
     @sprite_location  = options[:sprite_location] || @output
     @background       = options[:background] || '#FFFFFF00'
@@ -60,7 +61,6 @@ class SpriteGenerator
     image.write(destination){ self.background_color = background }
     css
   end
-  
   
 protected
   
@@ -213,8 +213,8 @@ protected
   
   
   # put filenames in format for each mode
-  def find_files_for_mode(mode)
-    case mode.to_sym
+  def find_files_for_mode
+    case @distribution
     when :smart
       smart_distribution
     when :horizontal
@@ -250,7 +250,7 @@ protected
   def vertical_distribution
     @files.inject(Hash.new{|hash, key| hash[key] = Array.new;}) do |h, file|
       basename = File.basename(file)
-      h['all'] << file
+      h['__all__'] << file
       h
     end
   end
