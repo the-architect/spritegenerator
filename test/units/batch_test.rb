@@ -1,10 +1,9 @@
-require 'test/unit'
-require File.expand_path(File.dirname(__FILE__) + '/../../lib/sprite_batch_generator')
+require File.expand_path('../../test_helper', __FILE__)
 
-class SpriteBatchGeneratorTest < Test::Unit::TestCase
+class BatchTest < Test::Unit::TestCase
 
   def setup
-    @config = 'test/config/batch.yml'
+    @config = File.join(Sprites::Config.root, 'test', 'config', 'batch.yml')
   end
   
   def teardown
@@ -12,14 +11,14 @@ class SpriteBatchGeneratorTest < Test::Unit::TestCase
     Dir.glob('test/output/*').each{|f| File.delete f }
   end
   
-  def test_should_read_config_file
-    @batch = SpriteBatchGenerator.new(@config)
+  should "read config file" do
+    @batch = Sprites::Batch.new(@config)
     assert_not_nil @batch
     assert_equal 2, @batch.batches.size
   end
   
-  def test_should_create_files_from_config
-    @batch = SpriteBatchGenerator.new(@config)
+  should "create files from config" do
+    @batch = Sprites::Batch.new(@config)
     css = @batch.generate
     assert_not_nil css
     output_files = Dir.glob('test/output/*')

@@ -1,24 +1,20 @@
-require 'rubygems'
-require 'liquid'
-require 'test/unit'
-require File.expand_path(File.dirname(__FILE__) + '/../../lib/sprite_generator')
+require File.expand_path('../../test_helper', __FILE__)
 
-class SpriteGeneratorTest < Test::Unit::TestCase
-  
+class GeneratorTest < Test::Unit::TestCase
+
   def setup
     @template = '.{{basename}}_{{variation}}{ background:transparent url({{sprite_location}}) -{{left}}px -{{top}}px no-repeat; width:{{width}}px; height:{{height}}px; }'
-    @all_images_path = 'test/images/*.png'
-    @output = 'test/output/sprite_by_create.png'
-    @page_path = 'test/output/test.html'
+    @all_images_path = File.join(Sprites::Config.root, 'test', 'images', '*.png')
+    @output = File.join(Sprites::Config.root, 'test', 'output', 'sprite_by_create.png')
+    @page_path = File.join(Sprites::Config.root, 'test', 'output', 'test.html')
   end
-  
   
   def teardown
     # delete test output
-    Dir.glob('test/output/*').each{|f| File.delete f }
+    Dir.glob(File.join(Sprites::Config.root, 'test', 'output', '*')).each{|f| File.delete f }
   end
 
-  def test_should_create_correct_sprite_for_tile_with_vertical_distribution
+  should "create correct sprite for tile with vertical distribution" do
     options = {
       :distribution => 'vertical',
       :tile         => '40x300',
@@ -26,7 +22,7 @@ class SpriteGeneratorTest < Test::Unit::TestCase
       :template     => "a.{{file_basename}} { padding-left:2em; background: transparent url(#{this_method}.png) -{{left}}px -{{top}}px no-repeat; }"
     }
     
-    generator = SpriteGenerator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
+    generator = Sprites::Generator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
     css = generator.create
     assert css.include?('-4500px')
     
@@ -36,28 +32,7 @@ class SpriteGeneratorTest < Test::Unit::TestCase
     assert File.exists?(output_file)
   end  
   
-  
-  def test_should_create_correct_sprite_for_tile_with_vertical_distribution
-    options = {
-      :distribution => 'vertical',
-      :tile         => '40x300',
-      :alignment    => 'north_west',
-      :template     => "a.{{file_basename}} { padding-left:2em; background: transparent url(#{this_method}.png) -{{left}}px -{{top}}px no-repeat; }"
-    }
-    
-    generator = SpriteGenerator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
-    css = generator.create
-    assert css.include?('-4500px')
-    
-    page = Liquid::Template.parse(File.open('test/templates/link.html').read).render('css' => css, 'image' => "#{this_method}.png")
-    output_file = File.join('test', 'output', "#{this_method}.html")
-    File.open(output_file, 'w+'){ |f| f.puts page }
-    assert File.exists?(output_file)
-  end
-  
-  
-  
-  def test_should_create_correct_sprite_for_tile_with_horizontal_distribution
+  should "create correct sprite for tile with horizontal distribution" do
     options = {
       :distribution => 'horizontal',
       :tile         => '400x50',
@@ -65,7 +40,7 @@ class SpriteGeneratorTest < Test::Unit::TestCase
       :template     => "a.{{file_basename}} { padding-left:2em; background: transparent url(#{this_method}.png) -{{left}}px -{{top}}px no-repeat; }"
     }
     
-    generator = SpriteGenerator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
+    generator = Sprites::Generator.new(@all_images_path, "test/output/#{this_method}.png", nil, options)
     css = generator.create
     assert css.include?('-6000px')
     
@@ -76,42 +51,42 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   end
   
   
-  def test_should_user_horizontal_distribution
+  should "use horizontal distribution" do
     template = %q{ {{left}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => 'horizontal' })
+    generator = Sprites::Generator.new(@all_images_path, @output, nil, { :template => template, :distribution => 'horizontal' })
     css = generator.create
     assert css.include?('240')
   end
   
-  def test_should_user_vertical_distribution
+  should "use vertical distribution" do
     template = %q{ {{top}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :distribution => 'vertical' })
+    generator = Sprites::Generator.new(@all_images_path, @output, nil, { :template => template, :distribution => 'vertical' })
     css = generator.create
     assert css.include?('240')
   end
   
-  def test_should_set_correct_context_filebasename_for_images_without_variations
+  should "set correct context filebasename for images without variations" do
     template = %q{ {{file_basename}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
+    generator = Sprites::Generator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
     css = generator.create
     assert css.include?('emoticon-evilgrin')
   end
   
-  def test_should_set_correct_context_width_for_images_without_variations
+  should "set correct context width for images without variations" do
     template = %q{ {{width}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
+    generator = Sprites::Generator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
     css = generator.create
     assert css.include?('16')
   end
   
-  def test_should_set_correct_context_top_for_images_without_variations
+  should "set correct context top for images without variations" do
     template = %q{ {{top}} }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
+    generator = Sprites::Generator.new(@all_images_path, @output, nil, { :template => template, :delimiter => '_' })
     css = generator.create
     assert !css.include?('-16')
   end
   
-  def test_should_create_correct_context
+  should "create correct context" do
     template = %q{
       basename: {{basename}}
       variation: {{variation}}
@@ -127,27 +102,27 @@ class SpriteGeneratorTest < Test::Unit::TestCase
       variation_number: {{variation_number}}
       variation_name: {{variation_name}}
     }
-    generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => template})
+    generator = Sprites::Generator.new(@all_images_path, @output, nil, {:template => template})
     css = generator.create
     assert css.include?('basename: emoticon-evilgrin')
     assert css.include?('variation_name: evilgrin')
     assert css.include?('file_basename: emoticon-evilgrin')
   end
   
-  def test_should_use_alignment_option
+  should "use alignment option" do
     assert_nothing_raised do
-      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :alignment => 'west'})
+      Sprites::Generator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :alignment => 'west'})
     end
   end
   
-  def test_should_complain_over_unknown_alignment_option
+  should "complain about unknown alignment option" do
     assert_raise NameError do
-      SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :alignment => 'somewhere'})
+      Sprites::Generator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF', :alignment => 'somewhere'})
     end
   end
   
-  def test_should_center_images_on_tiles
-    @generator = SpriteGenerator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF00'})
+  should "center images on tiles" do
+    @generator = Sprites::Generator.new(@all_images_path, @output, nil, {:template => @template, :tile => '100x100', :background => '#FFFFFF00'})
     css = @generator.create
     page = Liquid::Template.parse(File.open('test/templates/test.html').read).render('css' => css)
     assert page.include?("{ background:")
@@ -160,8 +135,8 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   end
   
   
-  def test_should_create_correct_css
-    @generator = SpriteGenerator.new(@all_images_path, @output, nil, :template => @template)
+  should "create correct css" do
+    @generator = Sprites::Generator.new(@all_images_path, @output, nil, :template => @template)
     css = @generator.create()
     page = Liquid::Template.parse(File.open('test/templates/test.html').read).render('css' => css)
     assert page.include?("{ background:")
@@ -174,44 +149,44 @@ class SpriteGeneratorTest < Test::Unit::TestCase
   end
   
   
-  def test_should_generate_sprite_file
-    @generator = SpriteGenerator.new(@all_images_path, @output, nil, :template => @template)
+  should "generate sprite file" do
+    @generator = Sprites::Generator.new(@all_images_path, @output, nil, :template => @template)
     css = @generator.create
     assert !(css.nil? || css.empty?)
     assert File.exists?(@output)
   end
   
   # bad, testing internal state
-  def test_should_find_versions_of_emoticons
+  should "find versions of emoticons" do
     files = Dir.glob(@all_images_path)
-    @generator = SpriteGenerator.new(files, @output, nil, {})
+    @generator = Sprites::Generator.new(files, @output, nil, {})
     analyzed = @generator.instance_variable_get(:@analyzed)
     assert_equal 9, analyzed['emoticon'].size
   end
   
   # bad, using internal state
-  def test_should_find_files_for_glob_path
-    @generator = SpriteGenerator.new(@all_images_path, @output, nil, {})
+  should "find files for glob path" do
+    @generator = Sprites::Generator.new(@all_images_path, @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 16, files.size
   end
   
   # bad, using internal state
-  def test_should_find_files
-    @generator = SpriteGenerator.new(['test/images/emoticon-evilgrin.png', 'test/images/emoticon-grin.png'], @output, nil, {})
+  should "find files" do
+    @generator = Sprites::Generator.new(['test/images/emoticon-evilgrin.png', 'test/images/emoticon-grin.png'], @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 2, files.size
   end
   
   # bad, using internal state
-  def test_should_not_find_anything
-    @generator = SpriteGenerator.new('test/blalala/*.hurz', @output, nil, {})
+  should "not find anything" do
+    @generator = Sprites::Generator.new('test/blalala/*.hurz', @output, nil, {})
     files = @generator.instance_variable_get(:@files)
     assert_equal 0, files.size
   end
 
 protected
-
+  # output filename based on test name for inspection
   def this_method
     caller[0] =~ /`([^']*)'/ and $1
   end

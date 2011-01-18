@@ -1,0 +1,3 @@
+module Spritegenerator
+  # Your code goes here...
+end

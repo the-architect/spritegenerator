@@ -1,9 +1,15 @@
 # no warnings
 ENV['RUBY_FLAGS'] = ''
+require 'rake'
+require 'rake/testtask'
 
-require 'rubygems'
-require './lib/sprite_generator'
+Rake::TestTask.new(:test) do |t|
+  t.libs << "test"
+  t.test_files = FileList['test/**/*_test.rb']
+  t.verbose = true
+end
 
+task :default => [:test]
 
 begin
   require 'jeweler'
@@ -14,9 +20,9 @@ begin
     p.email     = "marcel.scherf@gmail.com"
     p.homepage  = "http://github.com/the-architect/spritegenerator"
     
-
+    p.description = "Automatically generate Sprite Images and the corresponding CSS."
     p.files = FileList['lib/**/*.rb']
-    p.rubygems_version = '1.2.0'
+    p.rubygems_version = '1.3.7'
     p.add_dependency('liquid')
     p.add_dependency('rmagick')
   end

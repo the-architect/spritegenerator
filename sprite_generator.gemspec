@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sprite_generator}
-  s.version = "0.2.5"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marcel Scherf"]
@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
     "README.txt"
   ]
   s.files = [
-    "lib/sprite_batch_generator.rb",
-     "lib/sprite_generator.rb"
+    "lib/sprites/batch.rb",
+     "lib/sprites/generator.rb"
   ]
   s.homepage = %q{http://github.com/the-architect/spritegenerator}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -24,8 +24,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Automatically generate Sprite Images and the corresponding CSS using RMagick and Liquid.}
   s.test_files = [
-    "test/units/test_sprite_batch_generator.rb",
-     "test/units/test_sprite_generator.rb"
+    "test/units/batch_test.rb",
+     "test/units/generator_test.rb"
   ]
 
   if s.respond_to? :specification_version then
